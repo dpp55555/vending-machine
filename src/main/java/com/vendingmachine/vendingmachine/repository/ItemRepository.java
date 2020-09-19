@@ -8,5 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface ItemRepository extends JpaRepository<ItemEntity, Long> {
+
     Optional<ItemEntity> findByName(String name);
+
+    long countByName(String name);
+
 }

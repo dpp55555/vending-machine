@@ -2,33 +2,25 @@ package com.vendingmachine.vendingmachine.service;
 
 import com.vendingmachine.vendingmachine.entity.ItemEntity;
 import com.vendingmachine.vendingmachine.repository.ItemRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@AllArgsConstructor
 public class DefaultItemService implements ItemService {
 
     private final ItemRepository itemRepository;
 
-    public DefaultItemService(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
-    }
-
     @Override
     public ItemEntity create(ItemEntity item) {
-        checkItemName(item);
         return itemRepository.save(item);
     }
 
-    private void checkItemName(ItemEntity item) {
-        itemRepository.findByName(item.getName())
-                .map(it -> new IllegalArgumentException("Item with name: " + item.getName() + " already exists."));
-    }
-
     @Override
-    public List<ItemEntity> retrieveAll() {
-        return itemRepository.findAll();
+    public Page<ItemEntity> retrieveAll(Pageable pageable) {
+        return itemRepository.findAll(pageable);
     }
 
     @Override
@@ -43,8 +35,18 @@ public class DefaultItemService implements ItemService {
     }
 
     @Override
+    public long getCount() {
+        return itemRepository.count();
+    }
+
+    @Override
     public void remove(Long id) {
         itemRepository.deleteById(id);
+    }
+
+    @Override
+    public long getCount(String name) {
+        return itemRepository.countByName(name);
     }
 
 }

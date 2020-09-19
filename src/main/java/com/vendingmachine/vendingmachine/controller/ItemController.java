@@ -4,31 +4,31 @@ import com.vendingmachine.vendingmachine.dto.ItemDto;
 import com.vendingmachine.vendingmachine.dto.ItemResponseDto;
 import com.vendingmachine.vendingmachine.entity.ItemEntity;
 import com.vendingmachine.vendingmachine.service.ItemService;
+import lombok.AllArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
 @RestController
+@AllArgsConstructor
 public class ItemController {
 
     private final ConversionService conversionService;
     private final ItemService itemService;
-
-    public ItemController(ConversionService conversionService,
-                          ItemService itemService) {
-        this.conversionService = conversionService;
-        this.itemService = itemService;
-    }
 
     @PostMapping("/items")
     public ItemResponseDto create(@RequestBody @Valid ItemDto dto) {
@@ -37,8 +37,16 @@ public class ItemController {
     }
 
     @GetMapping("/items")
-    public List<ItemEntity> retrieve() {
-        return itemService.retrieveAll();
+    public List<ItemEntity> retrieve(@PageableDefault Pageable pageable) {
+        return itemService.retrieveAll(pageable).getContent();
+    }
+
+    @GetMapping("/items/count")
+    public long getCount(@RequestParam(defaultValue = "") String filter) {
+        if (filter.isBlank()) {
+            return itemService.getCount();
+        }
+        return itemService.getCount(filter);
     }
 
     @GetMapping("/items/{id}")
