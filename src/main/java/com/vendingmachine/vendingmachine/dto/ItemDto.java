@@ -1,16 +1,12 @@
 package com.vendingmachine.vendingmachine.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-public class CreateItemDto {
+public class ItemDto {
     @NotBlank String name;
 }
